@@ -1,0 +1,17 @@
+#Lines starting with '#' are comments.
+#Backslash character at the end of line means that the command continues in the next line.
+
+# favicon generated from https://gauger.io/fonticon/
+
+#DATABASE CONFIGURATION
+DriverClass=com.mysql.jdbc.Driver
+JdbcUrl=jdbc:mysql://localhost/information_schema?characterEncoding=utf8
+
+#APP CONFIGURATION
+APP_PORT=3000
+ROOT_PATH=/
+ROOT_URL=http://127.0.0.1:3000
+APP_TRADEMARK=jADMIN
+APP_COPYRIGHT=Copyright Computerise System Solutions 2020
+APP_TITLE=jAdmin
+HOME_TITLE=jAdmin (B4J MySQL Admin)

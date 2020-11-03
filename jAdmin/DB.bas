@@ -13,9 +13,9 @@ Sub Process_Globals
 	Private JdbcUrl As String	
 End Sub
 
-'Sub Initialize
-'	Exceptions = ""
-'End Sub
+Public Sub Initialize
+	Exceptions = ""
+End Sub
 
 Public Sub Init(DBUser As String, DBPassword As String, DBName As String) As Boolean
 	Dim Success As Boolean

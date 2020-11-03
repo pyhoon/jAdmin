@@ -105,7 +105,7 @@ Public Sub GetTableData(DBUser As String, DBPassword As String, DBName As String
 		con = pool.GetConnection
 		If con.IsInitialized Then
 			Dim qry As String = "SELECT * FROM " & TableName & " LIMIT " & Limit
-			html = ExecuteHtmlTable(con, qry, Null, Limit)
+			html = ExecuteHtmlTable(con, qry, Null)
 		End If
 	Catch
 		LogError(LastException)		
@@ -125,7 +125,8 @@ Public Sub SQLExecQuery(DBUser As String, DBPassword As String, DBName As String
 		pool.Initialize(DriverClass, JdbcUrl, DBUser, DBPassword)
 		con = pool.GetConnection
 		If con.IsInitialized Then
-			html = ExecuteHtmlTable(con, Statement, Null, Limit)
+			If Statement.ToUpperCase.Contains("LIMIT") = False Then Statement = Statement & " LIMIT " & Limit
+			html = ExecuteHtmlTable(con, Statement, Null)
 		End If
 	Catch
 		LogError(LastException)
@@ -162,7 +163,7 @@ End Sub
 
 'Creates a html text that displays the data in a table.
 'The style of the table can be changed by modifying HtmlCSS variable.
-Public Sub ExecuteHtmlTable(SQL As SQL, Query As String, StringArgs() As String, Limit As Int) As String
+Public Sub ExecuteHtmlTable(SQL As SQL, Query As String, StringArgs() As String) As String
 	Dim sb As StringBuilder
 	sb.Initialize
 	Try
@@ -172,7 +173,7 @@ Public Sub ExecuteHtmlTable(SQL As SQL, Query As String, StringArgs() As String,
 		Else
 			cur = SQL.ExecQuery(Query)
 		End If
-		Log("ExecuteHtmlTable: " & Query)																														 		
+		Log("ExecuteHtmlTable: " & Query)
 		sb.Append("<table class=""table""><thead>")'.Append(CRLF)
 		For i = 0 To cur.ColumnCount - 1
 			sb.Append("<th>").Append(cur.GetColumnName(i)).Append("</th>")
@@ -191,7 +192,7 @@ Public Sub ExecuteHtmlTable(SQL As SQL, Query As String, StringArgs() As String,
 			row = row + 1
 		Loop
 		cur.Close
-		sb.Append("</table>")		
+		sb.Append("</table>")
 	Catch
 		LogError(LastException)
 		Exceptions = LastException.Message

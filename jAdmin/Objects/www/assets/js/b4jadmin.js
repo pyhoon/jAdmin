@@ -8,7 +8,13 @@
           success: function(result)
           {
            if (result.success) {
-            window.location  = '/';
+            if (result.database == '') {
+              window.location  = '/';
+            }
+            else
+            {
+              window.location  = '/showtabledata?database='+result.database;
+            }            
           }
           else {
             //alert(result.errorMessage);
@@ -73,18 +79,21 @@
           {
            if (result.success) {
             //window.location  = '/';
+            $("#datacolumns").html(result.datacolumns);
             $("#execute-alert").removeClass("alert-danger");
             $("#execute-alert").addClass("alert-success");
             $("#execute-alert").html('Success');
             $("#execute-alert").fadeIn(); 
           }
           else {
-            $("#execute-alert").html('Failed');
+            $("#execute-alert").removeClass("alert-success");
+            $("#execute-alert").addClass("alert-danger");
+            $("#execute-alert").html(result.errorMessage);
             $("#execute-alert").fadeIn();             
           }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-          //alert(thrownError);
+          // alert(thrownError);
           $("#execute-alert").html(thrownError);
           $("#execute-alert").fadeIn();          
         }

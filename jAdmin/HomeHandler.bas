@@ -42,7 +42,7 @@ Sub Handle(req As ServletRequest, resp As ServletResponse)
 					responeMap.Put("errorMessage", "User name or password has no value")
 				Else
 					Dim success As Boolean = DB.Init(username, password, database)
-					If success = True Then						
+					If success = True Then
 						responeMap.Put("success", success)
 						responeMap.Put("database", database)
 						req.GetSession.SetAttribute("username", username)
@@ -52,35 +52,46 @@ Sub Handle(req As ServletRequest, resp As ServletResponse)
 							responeMap.Put("errorMessage", DB.ErrorDesc)
 						Else
 							responeMap.Put("errorMessage", "User name or password does not match")
-						End If						
-					End If				
+						End If
+					End If
 				End If
 				Dim jg As JSONGenerator
 				jg.Initialize(responeMap)
 				resp.ContentType = "application/json"
-				resp.Write(jg.ToString)				
+				resp.Write(jg.ToString)
 			Case "selectdatabase"
 				Dim username As String = req.GetSession.GetAttribute("username")
 				Dim password As String = req.GetSession.GetAttribute("password")
 				Dim dbname As String = req.GetParameter("selectdatabase").Trim
-				Dim strTable As String
+				Dim responeMap As Map
+				responeMap.Initialize
+				Dim strTable1 As String
 				If dbname.Contains("----------") Then
-					strTable = "&nbsp;"
+					strTable1 = "&nbsp;"
 				Else
 					Dim tbl As List = DB.GetAllTables(username, password, dbname)
 					If tbl.IsInitialized Then
-						strTable = "<table class=""table bordered bg-light p-3"">"
+						strTable1 = "<table class=""table bordered bg-light p-3"">"
 						For i = 0 To tbl.Size - 1
-							strTable = strTable & "<tr><td><a href=""showtabledata?database=" & dbname & "&table=" & tbl.Get(i) & """>" & tbl.Get(i) & "</a></td></tr>"
+							strTable1 = strTable1 & "<tr><td><a href=""showtabledata?database=" & dbname & "&table=" & tbl.Get(i) & """>" & tbl.Get(i) & "</a></td></tr>"
 						Next
-						strTable = strTable & "</table>"
+						strTable1 = strTable1 & "</table>"
 					Else
 						'strMain = Utility.BuildTag(strMain, "SELECT", "<option> &nbsp; ---------- &nbsp; </option>")
 						'Log("failed")
-						strTable = "&nbsp;"
+						strTable1 = "&nbsp;"
 					End If
 				End If
-				resp.Write(strTable)
+				'resp.Write(strTable)
+				Log(strTable1)
+				'strMain = strMain.Replace("<div id=""datatables""></div>", strTable1)
+				responeMap.Put("datatables", strTable1)
+				responeMap.Put("datacolumns", "<div id=""datacolumns""></div>")
+				responeMap.Put("success", True)
+				Dim jg As JSONGenerator
+				jg.Initialize(responeMap)
+				resp.ContentType = "application/json"
+				resp.Write(jg.ToString)
 			Case "showtabledata"
 				Dim username As String = req.GetSession.GetAttribute("username")
 				Dim password As String = req.GetSession.GetAttribute("password")
@@ -106,31 +117,31 @@ Sub Handle(req As ServletRequest, resp As ServletResponse)
 							Next
 							strTable1 = strTable1 & "</table>"
 							Log(strTable1)
-							strMain = strMain.Replace("<div id=""datatables""></div>", strTable1)
+							strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">" & strTable1 & "</div>")
 						
 							Dim strTable2 As String = DB.GetTableData(username, password, dbname, tbname, 10) ' limit to 10 rows
-							strMain = strMain.Replace("<div id=""datacolumns""></div>", strTable2)
+							strMain = strMain.Replace("<div id=""datacolumns""></div>", "<div id=""datacolumns"">" & strTable2 & "</div>")
 						Else
 							If DB.ErrorDesc <> "" Then
-								strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">" & DB.ErrorDesc & "</div>")
+								strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">" & DB.ErrorDesc & "</div>")
 							Else
-								strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">No tables found</div>")
-							End If							
+								strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">No tables found</div>")
+							End If
 						End If
 					Else
 						If DB.ErrorDesc <> "" Then
-							strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">" & DB.ErrorDesc & "</div>")
+							strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">" & DB.ErrorDesc & "</div>")
 						Else
-							strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">User name or password does not match</div>")
+							strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">User name or password does not match</div>")
 						End If
 						strMain = Utility.BuildTag(strMain, "SELECT", "<option> &nbsp; ---------- &nbsp; </option>")
-					End If					
+					End If
 				Else
 					'Return
 					If DB.ErrorDesc <> "" Then
-						strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">" & DB.ErrorDesc & "</div>")
+						strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">" & DB.ErrorDesc & "</div>")
 					Else
-						strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">User name or password does not match</div>")
+						strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">User name or password does not match</div>")
 					End If
 					strMain = Utility.BuildTag(strMain, "SELECT", "<option> &nbsp; ---------- &nbsp; </option>")
 				End If
@@ -145,11 +156,11 @@ Sub Handle(req As ServletRequest, resp As ServletResponse)
 				If statement = "" Then
 					responeMap.Put("errorMessage", "SQL Command cannot be empty!")
 				Else If statement.ToUpperCase.StartsWith("SELECT ") Then
-					'DB.Initialize
+					DB.Initialize
 					Dim strTable2 As String = DB.SQLExecQuery(username, password, dbname, statement, 10) ' limit to 10 rows
 					If DB.ErrorDesc <> "" Then
 						responeMap.Put("errorMessage", DB.ErrorDesc)
-					Else						
+					Else
 						responeMap.Put("datacolumns", strTable2)
 						responeMap.Put("success", True)
 					End If
@@ -194,13 +205,13 @@ Sub Handle(req As ServletRequest, resp As ServletResponse)
 					strMain = Utility.BuildTag(strMain, "USERNAME", "Username: " & req.GetSession.GetAttribute("username") & " &nbsp; ")
 				Else
 					strMain = Utility.BuildTag(strMain, "SELECT", "<option> &nbsp; ---------- &nbsp; </option>")
-				End If				
+				End If
 			Else
 				'Return
 				If DB.ErrorDesc <> "" Then
-					strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">" & DB.ErrorDesc & "</div>")
+					strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">" & DB.ErrorDesc & "</div>")
 				Else
-					strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""errorMessage"">User name or password does not match</div>")
+					strMain = strMain.Replace("<div id=""datatables""></div>", "<div id=""datatables"">User name or password does not match</div>")
 				End If
 				strMain = Utility.BuildTag(strMain, "SELECT", "<option> &nbsp; ---------- &nbsp; </option>")
 			End If

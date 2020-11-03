@@ -17,13 +17,11 @@
             }            
           }
           else {
-            //alert(result.errorMessage);
             $(".alert").html(result.errorMessage);
             $(".alert").fadeIn();
           }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-          //alert(thrownError);
           $(".alert").html(thrownError);
           $(".alert").fadeIn();  
         }
@@ -40,7 +38,6 @@
             window.location  = '/';
           },
           error: function (xhr, ajaxOptions, thrownError) {
-          //alert(thrownError);
           $("#page-alert").html(thrownError);
           $("#page-alert").fadeIn();          
         }
@@ -56,12 +53,25 @@
           data: {
             selectdatabase: $('#selectdatabase').find("option:selected").val()
           },
-          success: function(data)
+          success: function(result)
           {
             //adds the echoed response to our container
-            $("#datatables").html(data);
-          }
-        });
+            if (result.success) {
+              $("#datatables").html(result.datatables);
+              $("#datacolumns").html(result.datacolumns);
+            }
+            else {
+              $("#execute-alert").removeClass("alert-success");
+              $("#execute-alert").addClass("alert-danger");
+              $("#execute-alert").html(result.errorMessage);
+              $("#execute-alert").fadeIn();
+            }
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+          $("#execute-alert").html(thrownError);
+          $("#execute-alert").fadeIn();
+        }
+      });
         return;
       });
 

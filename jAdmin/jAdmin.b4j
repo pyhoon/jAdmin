@@ -1,4 +1,4 @@
-﻿AppType=StandardJava
+AppType=StandardJava
 Build1=Default,my.jadmin.b4j
 File1=index.html
 File2=login.html
@@ -28,7 +28,7 @@ Version=8.5
 #End Region
 
 ' MySQL Connector
-#AdditionalJar: mysql-connector-java-5.1.27-bin
+#AdditionalJar: mysql-connector-java-5.1.37-bin
 '#AdditionalJar: postgresql-9.4.1207				' PostgreSQL
 '#AdditionalJar: jtds-1.3.1.jar						' SQL Server
 ' Change based on the jdbc jar file
@@ -44,7 +44,7 @@ Sub Process_Globals
 	Public APP_TRADEMARK As String
 	Public APP_TITLE As String
 	Public HOME_TITLE As String		
-	Public const VERSION As Float = 2.22
+	Public const VERSION As Float = 1.10
 End Sub
 
 Sub AppStart (Args() As String)
@@ -70,7 +70,7 @@ Sub AppStart (Args() As String)
 	'add filter to protect the user only folder
 	'srvr.AddFilter("/", "HomeHandler", False)
 	srvr.Start
-	Log($"jRDC is running (version = $1.2{VERSION})"$)
+	Log($"jAdmin (version = $1.2{VERSION}) is running on port ${srvr.Port}"$)
 	StartMessageLoop
 End Sub
 

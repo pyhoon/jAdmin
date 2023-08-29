@@ -1,2 +1,4 @@
-* linguist-vendored
-*.b4j linguist-vendored=false
+*.b4j linguist-language=b4x
+*.bas linguist-language=b4x
+*.b4j linguist-detectable=true
+*.bas linguist-detectable=true

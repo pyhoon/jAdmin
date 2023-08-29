@@ -9,4 +9,4 @@ a simple database management written in B4J
 
 Made with ❤ in B4X
 
-Download and Develop with B4J for **FREE**: https://www.b4x.com/b4j.html
+Download and Develop with **[B4J](https://www.b4x.com/b4j.html)** for FREE

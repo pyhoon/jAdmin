@@ -1,5 +1,5 @@
 # jAdmin
-a simple database management written in B4J
+A simple MySQL database management written in B4J
 
 **Preview:**
 
